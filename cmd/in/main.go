@@ -18,6 +18,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"bufio"
 	"fmt"
@@ -38,8 +39,6 @@ func main() {
 		fatal("creating destination", err)
 	}
 
-	meta := make(models.Metadata, 6)
-
 	var request models.InRequest
 
 	err = json.NewDecoder(os.Stdin).Decode(&request)
@@ -49,12 +48,24 @@ func main() {
 
 	var inVersion = request.Version
 
+	meta := make(models.Metadata, 6)
+
+	versionFields := strings.SplitN(inVersion.Version, "+", 2)
+	if len(versionFields) > 1 {
+		buildCreatedBy := versionFields[1]
+		meta = append(meta, models.MetadataField{Name: "build-created-by", Value: buildCreatedBy})
+		os.Setenv("BUILD_CREATED_BY", buildCreatedBy)
+	}
+
 	handleProp(destination, "build-id", "BUILD_ID", meta, 0)
 	handleProp(destination, "build-name", "BUILD_NAME", meta, 1)
 	handleProp(destination, "build-job-name", "BUILD_JOB_NAME", meta, 2)
 	handleProp(destination, "build-pipeline-name", "BUILD_PIPELINE_NAME", meta, 3)
 	handleProp(destination, "build-team-name", "BUILD_TEAM_NAME", meta, 4)
 	handleProp(destination, "atc-external-url", "ATC_EXTERNAL_URL", meta, 5)
+	if len(versionFields) > 1 {
+		handleProp(destination, "build-created-by", "BUILD_CREATED_BY", meta, 6)
+	}
 
 	err = json.NewEncoder(os.Stdout).Encode(models.InResponse{
 		Version:  inVersion,

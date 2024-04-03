@@ -40,7 +40,7 @@ var _ = AfterSuite(func() {
 	gexec.CleanupBuildArtifacts()
 })
 
-func TestOut(t *testing.T) {
+func TestIn(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "Out Suite")
 }
