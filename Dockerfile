@@ -1,23 +1,23 @@
-FROM golang:alpine as builder
-COPY . /go/src/github.com/swce/metadata-resource
-ENV CGO_ENABLED 0
-ENV GOPATH /go/src/github.com/swce/metadata-resource/Godeps/_workspace:${GOPATH}
-ENV PATH /go/src/github.com/swce/metadata-resource/Godeps/_workspace/bin:${PATH}
-RUN go build -o /assets/out github.com/swce/metadata-resource/out
-RUN go build -o /assets/in github.com/swce/metadata-resource/in
-RUN go build -o /assets/check github.com/swce/metadata-resource/check
-RUN set -e; for pkg in $(go list ./...); do \
-		go test -o "/tests/$(basename $pkg).test" -c $pkg; \
-	done
+FROM golang:1.22.1-alpine3.18 as builder
 
-FROM alpine:edge AS resource
-RUN apk add --update bash tzdata
-COPY --from=builder /assets /opt/resource
+RUN apk add --no-cache --no-progress git make
 
-FROM resource AS tests
-COPY --from=builder /tests /tests
-RUN set -e; for test in /tests/*.test; do \
-		$test; \
-	done
+COPY . /src
+ARG BININFO_BUILD_DATE BININFO_COMMIT_HASH BININFO_VERSION # provided to 'make install'
+RUN make -C /src install PREFIX=/pkg GO_BUILDFLAGS='-mod vendor'
 
-FROM resource
+################################################################################
+
+FROM alpine:3.18
+
+# upgrade all installed packages to fix potential CVEs in advance
+RUN apk upgrade --no-cache --no-progress \
+  && apk add --no-cache --no-progress ca-certificates
+COPY --from=builder /pkg/bin/ /opt/resource/
+
+ARG BININFO_BUILD_DATE BININFO_COMMIT_HASH BININFO_VERSION
+LABEL source_repository="https://github.com/sapcc/concourse-metadata-resource" \
+  org.opencontainers.image.url="https://github.com/sapcc/concourse-metadata-resource" \
+  org.opencontainers.image.created=${BININFO_BUILD_DATE} \
+  org.opencontainers.image.revision=${BININFO_COMMIT_HASH} \
+  org.opencontainers.image.version=${BININFO_VERSION}

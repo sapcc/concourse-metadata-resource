@@ -1,11 +1,3 @@
-
-[![Docker Stars](https://img.shields.io/docker/stars/swce/metadata-resource.svg?style=plastic)](https://registry.hub.docker.com/v2/repositories/swce/metadata-resource/stars/count/)
-[![Docker pulls](https://img.shields.io/docker/pulls/swce/metadata-resource.svg?style=plastic)](https://registry.hub.docker.com/v2/repositories/swce/metadata-resource)
-[![Docker build status](https://img.shields.io/docker/build/swce/metadata-resource.svg)](https://github.com/swce/metadata-resource)
-[![Docker Automated build](https://img.shields.io/docker/automated/swce/metadata-resource.svg)](https://github.com/swce/metadata-resource)
-
-[![dockeri.co](http://dockeri.co/image/swce/metadata-resource)](https://hub.docker.com/r/swce/metadata-resource/)
-
 # Concourse CI Metadata Resource
 
 Implements a resource that passes to a task the metadata of the job.
@@ -16,7 +8,8 @@ Opinionated pipeline suggestion [here](#opinionated-pipeline)
 
 ## Thanks
 
-This resource was implemented based on the [build-metadata-resource](https://github.com/vito/build-metadata-resource)
+This resource was implemented based on the [build-metadata-resource](https://github.com/sapcc/concourse-metadata-resource)
+which in turn was based on [build-metadata-resource](https://github.com/vito/build-metadata-resource)
 
 ## Source Configuration
 
@@ -25,7 +18,7 @@ resource_types:
   - name: meta
     type: docker-image
     source:
-      repository: swce/metadata-resource
+      repository: sapcc/concourse-metadata-resource
       
 resources:
   - name: meta
@@ -70,7 +63,7 @@ resource_types:
   - name: meta
     type: docker-image
     source:
-      repository: swce/metadata-resource
+      repository: sapcc/concourse-metadata-resource
 
 resources:
   - name: meta
@@ -104,7 +97,7 @@ resource_types:
   - name: meta
     type: docker-image
     source:
-      repository: swce/metadata-resource
+      repository: sapcc/concourse-metadata-resource
   - name: keyval
     type: docker-image
     source:
@@ -180,11 +173,10 @@ The `prod-deploy` task:
 
 ### Prerequisites
 
-* golang is *required* - version 1.9.x is tested; earlier versions may also
+* golang is *required* - version 1.21.x is tested; earlier versions may also
   work.
 * docker is *required* - version 17.06.x is tested; earlier versions may also
   work.
-* godep is used for dependency management of the golang packages.
 
 ### Running the tests
 
@@ -196,7 +188,7 @@ will stop the build.
 Run the tests with the following command:
 
 ```sh
-docker build -t metadata-resource .
+docker build -t concourse-metadata-resource .
 ```
 
 ### Contributing

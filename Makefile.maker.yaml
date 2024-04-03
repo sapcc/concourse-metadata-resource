@@ -1,0 +1,38 @@
+# Configuration file for <https://github.com/sapcc/go-makefile-maker>
+
+metadata:
+  url: https://github.com/sapcc/concourse-metadata-resource
+
+binaries:
+  - name:        check
+    fromPackage: ./cmd/check
+    installTo:   bin/
+  - name:        in
+    fromPackage: ./cmd/in
+    installTo:   bin/
+  - name:        out
+    fromPackage: ./cmd/out
+    installTo:   bin/
+
+golang:
+  enableVendoring: true
+  setGoModVersion: true
+
+golangciLint:
+  createConfig: true
+
+githubWorkflow:
+  ci:
+    enabled: true
+    ignorePaths: [ "**.md" ] # all Markdown files
+    postgres:
+      enabled: false
+  license:
+    enabled: true
+  securityChecks:
+    enabled: true
+
+renovate:
+  enabled: true
+  assignees:
+    - fwiesel
