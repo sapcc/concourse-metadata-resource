@@ -1,6 +1,6 @@
 module github.com/sapcc/concourse-metadata-resource
 
-go 1.22.1
+go 1.22
 
 require (
 	github.com/onsi/ginkgo/v2 v2.17.1

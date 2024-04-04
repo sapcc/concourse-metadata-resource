@@ -36,3 +36,4 @@ renovate:
   enabled: true
   assignees:
     - fwiesel
+    - majewsky
